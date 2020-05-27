@@ -1,15 +1,23 @@
-import os, sys
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
 from Bio import SeqIO
 import itertools
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
+import sys
 
+#########################################################################################
+##########  Python code used in Alderson & Adriaenssens, et al.                ##########
+###########                  Reid Alderson, May 2019                           ##########
+#########################################################################################
 
 class Proteome(object):
     """ Search for motifs within proteomes and compare the observed vs. expected motif frequencies."""
     def __init__(self):
-        self.type = None
+        """ 
+        Store the amino acids in single-letter format for later use 
+        """
+        self.amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
         
         
     def load_uniprot(self, uniprot):
