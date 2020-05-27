@@ -13,7 +13,7 @@ For an example output, see the image below: <br />
 </p>
 
 See these pages for more information or installation of the various Python packages:<br />
-[itertools](https://docs.python.org/3/library/itertools.html)
+[itertools](https://docs.python.org/3/library/itertools.html)<br />
 [numpy](https://docs.scipy.org/doc/numpy-1.10.1/user/install.html) <br />
 [numpy via a pre-built package](https://scipy.org/install.html) <br />
 [matplotlib](https://matplotlib.org/faq/installing_faq.html)<br />
