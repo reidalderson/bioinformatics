@@ -2,9 +2,7 @@
 
 ### Searches an inputted proteome for specific motifs and perform statistical tests.<br /> 
 
-To execute this script, the user must have **itertools**, **numpy**, **pandas**, and **scipy**, installed in their Python distribution.<br />
-
-The user must provide a proteome file downloaded from [UniProt](https://www.uniprot.org/) or in FASTA format:<br />
+To execute this script, the user must have **itertools**, **numpy**, and **pandas** installed in their Python distribution. The user must provide a proteome file downloaded from [UniProt](https://www.uniprot.org/) or in FASTA format:<br />
 
 For example, see the image below: <br />
 
