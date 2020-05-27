@@ -1,6 +1,6 @@
 ## Python code for the bioinformatics analyses from Alderson, Adriaenssens, et al.
 
-### Searches a proteome for specific motifs and perform statistical tests.<br /> 
+### Searches a proteome for specific motifs and performs statistical tests.<br /> 
 
 Given a supplied proteome and queried peptide motif(s), the script will search for the number of instances of the motif(s) and calculate the expected number of instances based on amino acid frequencies in the proteome. If a list of disordered regions is supplied, then a comparison between structured and disordered regions of the proteome can be perofrmed. Flexible input within the amino-acid motif is permitted; for example, "X" allows any residue at that position and multiple residues indicate "or". Residue positions are separated by the _ character, and so the IxI/V motif would be inputted as, "IV_X_IV". <br />
 
