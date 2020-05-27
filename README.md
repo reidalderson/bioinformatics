@@ -4,10 +4,10 @@
 
 To execute this script, the user must have **itertools**, **numpy**, and **pandas** installed in their Python distribution. The user must provide a proteome file downloaded from [UniProt](https://www.uniprot.org/) or in FASTA format:<br />
 
-For example, see the image below: <br />
+For an example output, see the image below: <br />
 
 <p align="left">
-  <img src="output/AIILMTV_labeled_HMQC_illustrator.jpg" width="350px" height="auto"/>
+  <img src="output/compare_fractions_IV_X_IV_motifs.pdf" width="350px" height="auto"/>
 </p>
 
 See these pages for installation of the various Python packages:<br />
