@@ -7,7 +7,7 @@ To execute this script, the user must have **itertools**, **numpy**, and **panda
 For an example output, see the image below: <br />
 
 <p align="left">
-  <img src="output/compare_fractions_IV_X_IV_motifs.png" width="350px" height="auto"/>
+  <img src="output/compare_fractions_IV_X_IV_motifs.png" width="550px" height="auto"/>
 </p>
 
 See these pages for installation of the various Python packages:<br />
