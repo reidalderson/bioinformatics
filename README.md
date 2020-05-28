@@ -8,8 +8,8 @@ To execute this script, the user must have **itertools**, **numpy**, **pandas**,
 <br />
 * Statistical tests to check for deviations from expectations based on amino-acid frequencies in the proteome
 <p align="left">
-  <img src="output/structured_chisq.png" width="400px" height="auto"/>
-  <img src="output/disordered_chisq.png" width="400px" height="auto"/>
+  <img src="figures/structured_chisq.png" width="400px" height="auto"/>
+  <img src="figures/disordered_chisq.png" width="400px" height="auto"/>
 </p>
 <br />
 
