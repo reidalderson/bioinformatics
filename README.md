@@ -15,7 +15,7 @@ To execute this script, the user must have **biopython**, **itertools**, **numpy
 
 * Comparison of IxI/V motif frequency in structured and disordered regions of the proteome <br />
 <p align="left">
-  <img src="output/compare_fractions_IV_X_IV_motifs.png" width="908px" height="auto"/>
+  <img src="figures/compare_fractions_IV_X_IV_motifs.png" width="908px" height="auto"/>
 </p>
 
 See these pages for more information or installation of the various Python packages:<br />
