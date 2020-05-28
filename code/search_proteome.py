@@ -160,7 +160,7 @@ class Proteome(object):
         if self.sum < 1:
             self.fraction = 0
         else:
-            self.fraction = sum/(total_residues - len(query)+1)  # total number of hits divided by the total number of residues or motifs of the same size
+            self.fraction = self.sum/(total_residues - len(query)+1)  # total number of hits divided by the total number of residues or motifs of the same size
                         
         return self.sum, self.fraction       
  
