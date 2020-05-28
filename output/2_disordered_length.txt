@@ -1,0 +1,2 @@
+# Total number of residues in the IDR-ome
+1940986
