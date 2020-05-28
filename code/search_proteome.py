@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import pandas as pd
+import scipy.stats as stats
 import sys
 
 #########################################################################################
@@ -30,7 +31,6 @@ class Proteome(object):
         Parameters
         ----------		
         `uniprot` : file downloaded from UniProt containing a proteome of interest
-
         
         Returns
         -------
@@ -109,8 +109,6 @@ class Proteome(object):
         -------
         `AA_fractions` :  pandas.DataFrame, the amino acid frequencies in the proteome
         """   
-        # Amino acids 
-        self.amino_acids = ['A', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'V', 'W', 'Y']
         
         # Initialize an empty array to store the fractional amino acid values
         fractions = []
@@ -151,6 +149,7 @@ class Proteome(object):
         # Initialize an array
         hits_array = []
         
+               
         # Loop over each sequence and count the number of times the queried motif shows up
         for protein in seqs:
             hits_array.append(protein.count(query))
@@ -221,6 +220,13 @@ class Proteome(object):
         """ 
         # Split the input query into its corresponding residue positions
         listq = [item for item in query.split("_")]
+        
+        
+        # If no "_" is supplied (i.e. IXI), then create list of residues
+        if len(listq) == 1:
+            listq = list(listq[0])
+        else:
+            pass
 
         # Generator an iterable list of motifs  
         positions = [[] for q in listq]
@@ -236,6 +242,8 @@ class Proteome(object):
                     positions[i].append(j)
             else:
                 print("WARNING! iterate_motif does not recognize your input")
+                print('Please use single-letter amino acid codes (A, C, D, ...) or X to denote any amino acid')
+                print('Note that residue positions should be separated by the "_" character (no " ")')
                 print('exiting now....')
                 sys.exit()
         
@@ -362,3 +370,147 @@ class Proteome(object):
         self.found_proteins = list(dict.fromkeys(self.found_proteins))
         
         return self.found_proteins
+        
+        
+    def make_motifs(self, query):
+        """ Return motifs consistent with flex input"""
+        self.comb_list = []
+        for i in range(len(query.split("_"))):
+            self.comb_list.append([])
+            for j in query.split("_")[i]:
+                self.comb_list[i].append(j)
+
+        all_motifs = list(itertools.product(*self.comb_list))
+        self.motifs = [''.join(x) for x in all_motifs]
+        
+        return self.motifs
+       
+       
+    def calc_stats(self, query_proteome, query, difference='n', sub_proteome=None):
+        """ """
+        fname = '%s_observed_expected.xlsx' % str(query)
+
+        motifs = self.make_motifs(query)
+        columns = ['Obs_', 'Exp_']
+        headers = ([j+i for i in motifs for j in columns])
+        headers.insert(0, 'AA')
+                
+        # Prepare list to store data for the columns of a new DataFrame
+        data = [self.amino_acids]       
+        
+        # Iterate over each motif and store the Observed/Expected frequencies
+        for motif in motifs:
+            if difference.upper() == 'N':
+                calc = self.expected_motifs(query_proteome, self.iterate_motif(motif))
+                data.append(calc['Observed'])
+                data.append(calc['Expected'])
+            else:
+                try:
+                    calc_main = self.expected_motifs(query_proteome, self.iterate_motif(motif))
+                    calc_sub = self.expected_motifs(sub_proteome, self.iterate_motif(motif))
+                    data.append(calc_main['Observed'] - calc_sub['Observed'])
+                    data.append(calc_main['Expected'] - calc_sub['Expected'])
+                except ValueError:
+                    print('ERROR! Please include a 2nd proteome (sub_proteome) in the function "calc_stats" ')
+                    print('Exiting now.........................................................................')
+                    sys.exit()
+        
+        # Create the DataFrame using the newly created lists of Headers and Data
+        final = pd.DataFrame.from_dict(dict(zip(headers, data)))
+        
+        # Calculate chi-squared values 
+        n_motifs = len(motifs)
+        df_rows = len(final.index)
+        self.chisq_array = np.zeros(shape=(df_rows, n_motifs))
+
+        # loop over AA types, over motifs
+        for i in range(0, df_rows):
+            for j in range(0, n_motifs):
+                if j == 0:
+                    exp = final.values[:,j+1]
+                    obs = final.values[:,j+2]
+                else:
+                    exp = final.values[:,2*j+1]
+                    obs = final.values[:,2*j+2]
+                self.chisq_array[i,j] = ((obs[i]-exp[i])**2)/exp[i]
+
+        # Calculate P values
+        motif_chisq = np.sum(self.chisq_array, axis=0)                   # sum the chi-squared values down each column (i.e. for each motif)
+        self.aa_chisq = np.sum(self.chisq_array, axis=1)                 # sum the chi-squared values across each row (i.e. for each amino acid)
+        self.df = n_motifs*df_rows#len(motifs[0])                        # degrees of freedom, i.e. the number of residues in the motif
+
+
+    def plot_chisq(self, query, pval_cutoff=0.01, difference='n', main_proteome=None, sub_proteome=None, plt_title=None, save_flg='y'):
+
+        if difference.upper() == 'N':
+            bar_vals = self.aa_chisq
+        else:
+            bar_vals = self.calc_stats(main_proteome, query, difference='y', sub_proteome=sub_proteome)
+            bar_vals = self.aa_chisq
+            
+        plt_array = []
+            
+        # make summed chisq bar graph
+        fig = plt.figure()
+        bar = plt.bar(self.amino_acids, bar_vals, color='k')
+        plt.ylabel(r'$\sum_{i=1}^%.0f \chi^{2}_{i}$ value' % len(self.make_motifs(query)))
+        xlab = []
+        for i, res in enumerate(query.split("_")):
+            if len(res)>1:
+                new = '['
+                new += '/'.join(list(res))
+                new += ']'
+                xlab.append(new)
+            else:
+                xlab.append(res)
+        xlab = '-'.join(xlab)
+        plt.xlabel('Amino acid in %s' % xlab)
+        if not plt_title:
+            plt.title(r'$\chi^{2}$ values for %s' % (query))
+        else:
+            plt.title(r'$\chi^{2}$ values for %s in %s' % (query, plt_title))
+         
+        df = 0
+        for res in query.split("_"):
+            if len(res)>1:
+                df += len(list(res))
+            else:
+                df += 1
+        df = df-1
+        print('>> There are %.0f degrees of freedom' % df)
+        
+        
+        # make stacked bar graph
+        fig = plt.figure()
+        labels = self.make_motifs(query)
+        colors = ['k', 'r', 'purple', 'blue', 'darkgreen', 'orange', 'brown']*2
+        for i in range(np.shape(self.chisq_array)[1]):
+            if i < np.shape(self.chisq_array)[1]-1:
+                if i == 0:
+                    plt.bar(self.amino_acids, self.chisq_array[:,i], label=labels[i], color=colors[i])
+                else:
+                    plt.bar(self.amino_acids, self.chisq_array[:,i], bottom=sum(self.chisq_array[:,j] for j in range(0,i)), label=labels[i], color=colors[i])
+            else:
+                bar = plt.bar(self.amino_acids, self.chisq_array[:,i], bottom=sum(self.chisq_array[:,j] for j in range(0,i)), label=labels[i], color=colors[i])
+
+        # Add counts above the two bar graphs
+        for i, rect in enumerate(bar):
+            height = rect.get_height() + np.sum(self.chisq_array[i,:-1])
+            if stats.chi2.sf(height, df) < pval_cutoff: 
+                print('>>> yes! ', i, stats.chi2.sf(height, df))
+                plt.text(rect.get_x() + rect.get_width()/2.0, height, '*', ha='center', va='bottom') 
+                
+        plt.legend(loc='upper right')
+        plt.ylabel(r'$\chi^{2}$ value')
+        plt.xlabel('Amino acid in %s' % xlab)
+        if not plt_title:
+            pass
+        else:
+            plt.title('%s' % plt_title)
+        plt.tight_layout()    
+        if save_flg.upper() != 'Y':
+            plt.show()  
+        else:
+            plt_array.append(fig)
+        
+        return plt_array
