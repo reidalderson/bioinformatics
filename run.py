@@ -1,4 +1,4 @@
-from search_proteome import Proteome 
+from code.search_proteome import Proteome 
 import numpy as np
 import matplotlib.pyplot as plt
 import os
