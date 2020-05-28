@@ -10,8 +10,8 @@ For example outputs, see the image below: <br />
 
 Statistical tests for deviations from frequencies expected based on amino-acid fractions in the proteome
 <p align="left">
-  <img src="output/structured_chisq.png" width="450px" height="auto"/>
-  <img src="output/disordered_chisq.png" width="450px" height="auto"/>
+  <img src="output/structured_chisq.png" width="300px" height="auto"/>
+  <img src="output/disordered_chisq.png" width="300px" height="auto"/>
 </p>
 <br />
 Comparison of IxI/V motif frequency as a function of the central residue "x" for both structured and disordered regions of the proteome
