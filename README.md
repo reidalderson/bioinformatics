@@ -143,7 +143,8 @@ plt.show()
 </p>
 
 <br />
-We can subtract out the contribution of a smaller region of a proteome from the entire proteome:
+We can subtract out the contribution of a smaller region of a proteome from the entire proteome<br/>
+and perform a chi-squared analysis:
 
 ```python
 query = 'IV_X_IV'
@@ -155,6 +156,48 @@ p.plot_chisq(query, pval=0.01, diff='y', main=human, sub=IDRs, title='Structured
   <img src="figures/structured_chisq.png" width="600px" height="auto"/>
 </p>
 
+We can write out files containing the motif counts in structured vs. disordered regions
+```python
+query = 'IV_X_IV'                                       # load the query motif
+iterator = start.iterate_motif(query)                   # get all motifs 
+data_array = np.zeros(shape=(2, len(iterator), 2))      # set up 3D data array 
+
+# store the data in a numpy array and write to disk
+fout1 = open(('structured_count_%s_motifs.txt' % query), 'w')
+fout2 = open(('disordered_count_%s_motifs.txt' % query), 'w')
+fout1.write('%s\t%s\n' % ('Motif', 'Count'))
+fout2.write('%s\t%s\n' % ('Motif', 'Count'))
+
+# first store the data, calculate the total count, and write out the total
+for i, motif in enumerate(iterator):
+    data_array[0, i, 0] = p.find_motifs(human, motif)[0]
+    data_array[1, i, 0] = p.find_motifs(IDRs, motif)[0]
+structured_count = np.sum(data_array[0,:,0]) - np.sum(data_array[1,:,0])
+fout1.write('%s\t%.0f\n' % ('Total', structured_count))
+fout2.write('%s\t%.0f\n' % ('Total', np.sum(data_array[1,:,0])))
+
+# then write out the count for each motif 
+for j, val in enumerate(iterator):
+    fout1.write('%s\t%.0f\n' % (val, data_array[0,j,0]-data_array[1,j,0]))
+    fout2.write('%s\t%.0f\n' % (val, data_array[1,j,0]))
+fout1.close()
+fout2.close()
+```
+<br />
+
+Finally, we can identify all proteins that contain a particular motif
+
+```python
+query = 'IPV'   # the motif we are searching for
+
+# prepare headers for the text files
+idr_header = ('ENSEMBL IDs of proteins in the IDR-ome that contain at least one %s motif' % query)
+prot_header = ('UniProt IDs of proteins in the proteome that contain at least one %s motif' % query)
+
+# write out text files with ENSEMBL or UniProt IDs for proteins that contain the queried motif
+np.savetxt(('disordered_protein_%s_motifs.txt' % query), p.find_proteins(IDRs, query, 'fasta'), fmt='%s', header=idr_header)
+np.savetxt(('proteome_proteins_%s_motifs.txt' % query), p.find_proteins(human, query, 'uniprot'), fmt='%s', header=prot_header)
+```
 
 See these pages for more information or installation of the various Python packages:<br />
 [biopython](https://biopython.org/wiki/Download)<br />
