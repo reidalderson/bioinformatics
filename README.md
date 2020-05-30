@@ -95,8 +95,21 @@ print(count_motifs)
 
 We can compare and plot the observed frequencies of particular motifs vs. those expected from amino acid composition alone:
 ```python
-# Return a Pandas dataframe with observed & expected number of motifs (based on AA fractions) 
-expected_motifs = p.expected_motifs(human, iterator)   
+expected_motifs = p.expected_motifs(human, iterator)   # Pandas dataframe : motif, probability, observed, expected
+
+print(expected_motifs)
+   Motif  Probability  Observed  Expected
+0    IAI     0.000132    1322.0    1499.0
+1    IAV     0.000182    2035.0    2064.0
+2    ICI     0.000043     529.0     490.0
+3    ICV     0.000059     617.0     675.0
+4    IDI     0.000089    1228.0    1012.0
+..   ...          ...       ...       ...
+75   VVV     0.000212    2988.0    2416.0
+76   VWI     0.000032     379.0     358.0
+77   VWV     0.000043     512.0     493.0
+78   VYI     0.000069     900.0     784.0
+79   VYV     0.000095    1137.0    1079.0
 
 # Create the label for the axes on the plot
 xlab = []
