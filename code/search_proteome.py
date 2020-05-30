@@ -1,17 +1,3 @@
-from Bio import SeqIO
-import itertools
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-import pandas as pd
-import scipy.stats as stats
-import sys
-
-#########################################################################################
-##########  Python code used in Alderson & Adriaenssens, et al.                ##########
-###########                  Reid Alderson, May 2019                           ##########
-#########################################################################################
-
 class Proteome(object):
     """ Search for motifs within proteomes and compare the observed vs. expected motif frequencies."""
     def __init__(self):
@@ -97,7 +83,7 @@ class Proteome(object):
         return self.total_length
         
         
-    def proteome_amino_acid_fractions(self, query_proteome):
+    def proteome_AA_fractions(self, query_proteome):
         """ 
         Calculate the fractional amino acid composition of a proteome.
             
@@ -164,7 +150,7 @@ class Proteome(object):
         return self.sum, self.fraction       
  
         
-    def count_multiple_motifs(self, data_frame, list_of_motifs):
+    def find_flex_motifs(self, data_frame, list_of_motifs):
         """ 
         Search a proteome for a list of motifs.
             
@@ -269,7 +255,7 @@ class Proteome(object):
         `final_dataframe` :  pandas.DataFrame, expected fraction and count of a given motif. 
         """   
         # Get fractional values of the amino acids within the proteome
-        fractional_AA = self.proteome_amino_acid_fractions(query_proteome)
+        fractional_AA = self.proteome_AA_fractions(query_proteome)
         
         # Get length of the queried proteome 
         length = self.proteome_length(query_proteome)
