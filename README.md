@@ -143,13 +143,13 @@ plt.show()
 </p>
 
 <br />
-We can subtract the contribution of a smaller region of a proteome from the entire proteome like this"
+We can subtract out the contribution of a smaller region of a proteome from the entire proteome:
 
 ```python
 query = 'IV_X_IV'
 IDRs = p.load_fasta("human_idrs.fasta")   # Load a FASTA file with disordered regions
 p.calc_stats(human, query, difference='y', sub_proteome=IDRs)   # calculate chi squared values (observed vs. expected)
-p.plot_chisq(query, pval_cutoff=0.01, difference='y', main=human, sub=IDRs, plt_title='Structured', save_flg='n') # plot x2 values
+p.plot_chisq(query, pval=0.01, diff='y', main=human, sub=IDRs, title='Structured', save='n') # plot x2 values
 ```
 <p align="left">
   <img src="figures/structured_chisq.png" width="600px" height="auto"/>
