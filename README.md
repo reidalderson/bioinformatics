@@ -18,6 +18,113 @@ To execute this script, the user must have **biopython**, **itertools**, **numpy
   <img src="figures/compare_fractions_IV_X_IV_motifs.png" width="908px" height="auto"/>
 </p>
 
+<br />
+<br />
+
+A UniProt proteome file can be loaded like this:
+
+
+```python
+p = Proteome()
+human = p.load_uniprot('human_proteome.tab')
+```
+And we can calculate the length and composition of the proteome as such:
+
+```python
+length = p.proteome_length(human)                 # the number of amino acid in the proteome
+composition = p.proteome_AA_fractions(human)      # the amino acid fractions in the proteome
+
+print(length)
+11373813
+
+print(composition)
+AA  Fraction
+A  0.070190
+C  0.022974
+D  0.047391
+E  0.071040
+F  0.036479
+G  0.065723
+H  0.026239
+I  0.043344
+K  0.057259
+L  0.099601
+M  0.021318
+N  0.035851
+P  0.063116
+Q  0.047705
+R  0.056423
+S  0.083255
+T  0.053569
+V  0.059672
+W  0.012188
+Y  0.026661
+```
+
+Counting the number of times a specific motif occurs can be performed like this:
+
+```python
+query = 'IPV'                               # the motif of interest
+count_motif = p.find_motifs(human, query)   # motif count and fraction WRT same-sized motifs
+
+print(count_motif)
+(2076, 0.0001825)
+```
+
+And for flexible input:
+
+```python
+flex_query = 'IV_X_IV'                              # "_" separates residues, "X" is wild card, >1 AA means "or"
+iterator = p.iterate_motif(flex_query)              # generates list of motifs consistent with flex input
+count_motifs = p.find_flex_motifs(human, iterator)  # motif, count, and fraction WRT same-sized motifs
+
+print(count_motifs)
+    Motif  Count  Fraction
+0    IAI   1322  0.000116
+1    IAV   2035  0.000179
+2    ICI    529  0.000047
+3    ICV    617  0.000054
+4    IDI   1228  0.000108
+..   ...    ...       ...
+75   VVV   2988  0.000263
+76   VWI    379  0.000033
+77   VWV    512  0.000045
+78   VYI    900  0.000079
+79   VYV   1137  0.000100
+```
+
+We can compare and plot the observed frequencies of particular motifs vs. those expected from amino acid composition alone:
+```python
+# Return a Pandas dataframe with observed & expected number of motifs (based on AA fractions) 
+expected_motifs = p.expected_motifs(human, iterator)   
+
+# Create the label for the axes on the plot
+xlab = []
+for i, res in enumerate(query.split("_")):
+    if len(res)>1:
+        xlab.append('['+'/'.join(list(res))+']')
+    else:
+        if res == 'X':
+            xlab.append(res.lower())
+        else:
+            xlab.append(res)
+xlab = ''.join(xlab)
+
+# Now set up the plot
+plt.plot(expected['Expected'][1:], expected['Expected'][1:], 'k-', label='y = x')
+plt.plot(expected['Expected'][1:], expected['Observed'][1:], 'ro')
+plt.xlabel('Expected number of %s motifs' % xlab)
+plt.ylabel('Observed number of %s motifs' % xlab)
+plt.legend(loc='upper left')
+plt.tight_layout()
+plt.show()
+```
+<p align="left">
+  <img src="figures/correlation_plot.png" width="600px" height="auto"/>
+</p>
+
+<br />
+
 See these pages for more information or installation of the various Python packages:<br />
 [biopython](https://biopython.org/wiki/Download)<br />
 [itertools](https://docs.python.org/3/library/itertools.html)<br />
