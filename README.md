@@ -27,8 +27,11 @@ A UniProt proteome file can be loaded like this:
 ```python
 p = Proteome()
 human = p.load_uniprot('human_proteome.tab')
+
+# Note that the UniProt file should contain the following columns
+# 'Entry', 'Entry name', 'Status', 'Protein names', 'Gene names', 'Organism', 'Length', 'Sequence'
 ```
-And we can calculate the length and composition of the proteome as such:
+We can calculate the length and amino-acid composition of the proteome as such:
 
 ```python
 length = p.proteome_length(human)                 # the number of amino acid in the proteome
@@ -71,7 +74,7 @@ print(count_motif)
 (2076, 0.0001825)
 ```
 
-And for flexible input:
+and for flexible input:
 
 ```python
 flex_query = 'IV_X_IV'                              # "_" separates residues, "X" is wild card, >1 AA means "or"
@@ -124,11 +127,14 @@ for i, res in enumerate(query.split("_")):
 xlab = ''.join(xlab)
 
 # Now set up the plot
-plt.plot(expected['Expected'][1:], expected['Expected'][1:], 'k-', label='y = x')
+xy_max = max(1.05*np.max(expected['Expected'][1:]), 1.05*np.max(expected['Observed'][1:]))
+plt.plot([0, xy_max], [0, xy_max], 'k-', lw=0.5, label='y = x')
 plt.plot(expected['Expected'][1:], expected['Observed'][1:], 'ro')
 plt.xlabel('Expected number of %s motifs' % xlab)
 plt.ylabel('Observed number of %s motifs' % xlab)
 plt.legend(loc='upper left')
+plt.xlim(0, xy_max)
+plt.ylim(0, xy_max)
 plt.tight_layout()
 plt.show()
 ```
@@ -137,6 +143,18 @@ plt.show()
 </p>
 
 <br />
+We can subtract the contribution of a smaller region of a proteome from the entire proteome like this"
+
+```python
+query = 'IV_X_IV'
+IDRs = p.load_fasta("human_idrs.fasta")   # Load a FASTA file with disordered regions
+p.calc_stats(human, query, difference='y', sub_proteome=IDRs)   # calculate chi squared values (observed vs. expected)
+p.plot_chisq(query, pval_cutoff=0.01, difference='y', main=human, sub=IDRs, plt_title='Structured', save_flg='n') # plot x2 values
+```
+<p align="left">
+  <img src="figures/structured_chisq.png" width="600px" height="auto"/>
+</p>
+
 
 See these pages for more information or installation of the various Python packages:<br />
 [biopython](https://biopython.org/wiki/Download)<br />
