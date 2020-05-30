@@ -64,7 +64,7 @@ W  0.012188
 Y  0.026661
 ```
 
-Counting the number of times a specific motif occurs can be performed like this:
+We can count the number of times that a specific motif occurs in the proteome:
 
 ```python
 query = 'IPV'                               # the motif of interest
@@ -143,13 +143,12 @@ plt.show()
 </p>
 
 <br />
-We can subtract out the contribution of a smaller region of a proteome from the entire proteome<br/>
-and perform a chi-squared analysis:
+We can subtract out the contribution of a smaller region of a proteome from the entire proteome and perform a chi-squared analysis:
 
 ```python
 query = 'IV_X_IV'
 IDRs = p.load_fasta("human_idrs.fasta")   # Load a FASTA file with disordered regions
-p.calc_stats(human, query, difference='y', sub_proteome=IDRs)   # calculate chi squared values (observed vs. expected)
+p.calc_stats(human, query, difference='y', sub_proteome=IDRs)   # calculate x2 values (observed vs. expected)
 p.plot_chisq(query, pval=0.01, diff='y', main=human, sub=IDRs, title='Structured', save='n') # plot x2 values
 ```
 <p align="left">
