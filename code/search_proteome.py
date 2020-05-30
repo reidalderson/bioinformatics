@@ -440,12 +440,12 @@ class Proteome(object):
         self.df = n_motifs*df_rows#len(motifs[0])                        # degrees of freedom, i.e. the number of residues in the motif
 
 
-    def plot_chisq(self, query, pval_cutoff=0.01, difference='n', main_proteome=None, sub_proteome=None, plt_title=None, save_flg='y'):
+    def plot_chisq(self, query, pval=0.01, diff='n', main=None, sub=None, title=None, save_flg='y'):
 
-        if difference.upper() == 'N':
+        if diff.upper() == 'N':
             bar_vals = self.aa_chisq
         else:
-            bar_vals = self.calc_stats(main_proteome, query, difference='y', sub_proteome=sub_proteome)
+            bar_vals = self.calc_stats(main, query, diff='y', sub_proteome=sub)
             bar_vals = self.aa_chisq
             
         plt_array = []
@@ -465,10 +465,10 @@ class Proteome(object):
                 xlab.append(res)
         xlab = '-'.join(xlab)
         plt.xlabel('Amino acid in %s' % xlab)
-        if not plt_title:
+        if not title:
             plt.title(r'$\chi^{2}$ values for %s' % (query))
         else:
-            plt.title(r'$\chi^{2}$ values for %s in %s' % (query, plt_title))
+            plt.title(r'$\chi^{2}$ values for %s in %s' % (query, title))
          
         df = 0
         for res in query.split("_"):
@@ -496,17 +496,17 @@ class Proteome(object):
         # Add counts above the two bar graphs
         for i, rect in enumerate(bar):
             height = rect.get_height() + np.sum(self.chisq_array[i,:-1])
-            if stats.chi2.sf(height, df) < pval_cutoff: 
+            if stats.chi2.sf(height, df) < pval: 
                 print('>>> yes! ', i, stats.chi2.sf(height, df))
                 plt.text(rect.get_x() + rect.get_width()/2.0, height, '*', ha='center', va='bottom') 
                 
         plt.legend(loc='upper right')
         plt.ylabel(r'$\chi^{2}$ value')
         plt.xlabel('Amino acid in %s' % xlab)
-        if not plt_title:
+        if not title:
             pass
         else:
-            plt.title('%s' % plt_title)
+            plt.title('%s' % title)
         plt.tight_layout()    
         if save_flg.upper() != 'Y':
             plt.show()  
