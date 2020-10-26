@@ -77,8 +77,8 @@ if __name__ == "__main__":
     print('\n(6) Counting multiple motifs in the proteome using "iterate_motif"\n')
     print('Proteome = \n', start.count_multiple_motifs(uniprot, iterator))
     print('"IDR-ome" = \n', start.count_multiple_motifs(idrs, iterator))
-    np.savetxt(('output/6_disordered_%s_motifs_count.txt' % query), start.count_multiple_motifs(uniprot, iterator).values, fmt='%s')
-    np.savetxt(('output/6_proteome_%s_motifs_count.txt' % query), start.count_multiple_motifs(idrs, iterator).values, fmt='%s')
+    np.savetxt(('output/6_proteome_%s_motifs_count.txt' % query), start.count_multiple_motifs(uniprot, iterator).values, fmt='%s')
+    np.savetxt(('output/6_disordered_%s_motifs_count.txt' % query), start.count_multiple_motifs(idrs, iterator).values, fmt='%s')
     print('\n###############################################################################\n')
 
 
